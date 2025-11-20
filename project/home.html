@@ -1,0 +1,16 @@
+{% extends 'accounts/base.html' %}
+
+{% block title %}Home - Auth System{% endblock %}
+
+{% block content %}
+<div class="welcome-container">
+    <h1>Welcome to Auth System</h1>
+    <p>You are successfully logged in as <strong>{{ user.username }}</strong></p>
+    <p>Email: {{ user.email }}</p>
+    <p>Member since: {{ user.date_joined|date:"F j, Y" }}</p>
+    
+    <div class="actions">
+        <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+    </div>
+</div>
+{% endblock %}

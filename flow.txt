@@ -1,0 +1,190 @@
+session 1
+
+1- in cmd : django-admin startproject projectname
+
+
+2- open folder with vs code
+    new terminal
+
+3- craete virtual enviroment
+    python -m venv myenv
+    ./myenv/Scripts/Activate
+    (myenv) PS C:\Users\Asgardia\Desktop\advanceweb2> pip install django
+
+
+4- python manage.py startapp appname
+
+
+5- add app to the installed apps in setting.py (in main folder)
+    mainfolder > setting.py > 
+        INSTALLED_APPS = [
+
+            .
+            .
+            .
+
+            'appname',
+        ]
+
+
+
+    MODEL CREATING 
+        1- write your model class inheriting from models.Model
+        2- python manage.py makemigrations
+        3- python manage.py migrate
+        4- python manage.py createsuperuser
+        5- register your model in admin.py => admin.site.register(yourmodelname)
+        6- http://localhost:8000/admin/
+
+
+
+    USING IMAGE FIELD
+    
+        1- pip install pillow
+
+        2- use models.imagefield() in your models
+
+        3- add these to settings.py 
+            MEDIA_URL = 'media/'
+            MEDIA_ROOT = 'uploaded_images'
+
+        4- add these to urls.py 
+            from django.conf.urls.static import static
+            from django.conf import settings
+
+            urlpatterns = [
+                ...
+            ]
+            urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
+session 2
+
+
+    DJANGO JALALI DATE
+    1- pip install django_jalali
+    2- add it to settings.py before custom apps 'django_jalali',
+    3- in models.py from django_jalali.db import models as jmodels
+    4- wirte you models using jmodels.jDateField(null=True) and jmodels.jDateTimeField(null=True)
+
+
+
+    USING ABSTRACT USER OF DJANGO
+
+        1- from django.contrib.auth.models import AbstractUser
+
+        2- inherit you model like class ModelName(AbstractUser)
+
+        3- in settings.py add :
+            AUTH_USER_MODEL = 'YourAppName.ModelName'
+
+        4- makemigrations and migrate
+
+
+session 3
+
+    introduce template folder
+        create a templates folder in project ROOT
+        mainfolder > setting.py > TEMPLATES = [
+            {
+                'BACKEND': 'django.template.backends.django.DjangoTemplates',
+                'DIRS': [BASE_DIR / 'templates'],  <================================== what you should add here
+                'APP_DIRS': True,
+                'OPTIONS': {
+                    'context_processors': [
+                        'django.template.context_processors.debug',
+                        'django.template.context_processors.request',
+                        'django.contrib.auth.context_processors.auth',
+                        'django.contrib.messages.context_processors.messages',
+                    ],
+                },
+            },
+        ]
+
+
+    add urls.py to your app
+    
+        yourapp > create new python file (urls.py)
+
+        mainfolder > urls.py
+
+            from django.contrib import admin
+            from django.urls import path, include
+
+            urlpatterns = [
+                path('admin/', admin.site.urls),
+                path('', include('base.urls'))
+            ]
+
+
+session 4
+
+    CREATING CUSTOM MANAGE.PY COMMANDS
+        1- create a folder named "management" in one of your apps
+        2- create another folder named "commands" in the management folder
+        3- create a python file with your favorite name (.py)
+        4- write these inside the python file 
+
+            from django.core.management.base import BaseCommand
+            class Command(BaseCommand):
+                help = 'help text'
+
+                def handle(self, *args, **kwargs):
+
+                ((( write your logic here )))
+
+                pass
+
+
+    CREATE PAGINATIONS
+        1- in views.py import : from django.core.paginator import Paginator
+        2- in your function write these logic for creating and getting page number :
+            object_list = Product.objects.all()
+            paginator = Paginator(object_list, 16)
+            page = request.GET.get('page') if request.GET.get('page') else 1
+            objects = paginator.get_page(page)
+
+        3- send the new objects to front end:
+            context = {
+                'objects':objects,
+            }
+
+            return render (request, 'index.html', context)
+
+        4- use template paginator like this :
+
+            <div class="pagination">
+                <span class="step-links">
+                    {% if objects.has_previous %}
+                        <a href="?page=1">&laquo; first</a>
+                        <a href="?page={{ objects.previous_page_number }}">previous</a>
+                    {% endif %}
+
+                    <span class="current">
+                        Page {{ objects.number }} of {{ objects.paginator.num_pages }}.
+                    </span>
+
+                    {% if objects.has_next %}
+                        <a href="?page={{ objects.next_page_number }}">next</a>
+                        <a href="?page={{ objects.paginator.num_pages }}">last &raquo;</a>
+                    {% endif %}
+                </span>
+            </div>
+
+session 5
+
+    MAKING A SPECIFIC MODEL PAGE
+        1- make a fucntion with two input [def product(request, pk)] in views.py
+        2- make a url with a pk output like :
+            path('product/<int:pk>', product, name='detail_url'),
+        3- get the id in function and get that item from data base in views.py
+            product = Product.objects.get(id=pk)
+        4- send this product using a context to frontend
+            context = {
+                'product':product,
+            }
+            return render(request, 'detail.html', context)
+
+        5- refer to this product page href with :
+            {% url 'detail_url' object.id %}
+        

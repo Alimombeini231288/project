@@ -1,0 +1,41 @@
+{% extends 'accounts/base.html' %}
+
+{% block title %}Login - Auth System{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <h1>Login to Your Account</h1>
+    
+    <form method="post" class="auth-form">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="id_username">Username</label>
+            {{ form.username }}
+            {% if form.username.errors %}
+                <div class="error">{{ form.username.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label for="id_password">Password</label>
+            {{ form.password }}
+            {% if form.password.errors %}
+                <div class="error">{{ form.password.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <button type="submit" class="auth-btn login-btn">Login</button>
+    </form>
+    
+    <div class="auth-link">
+        Don't have an account? <a href="{% url 'signup' %}">Sign up</a>
+    </div>
+</div>
+
+<script>
+    // Add placeholders
+    document.getElementById('id_username').placeholder = 'Enter your username';
+    document.getElementById('id_password').placeholder = 'Enter your password';
+</script>
+{% endblock %}
